@@ -25,12 +25,11 @@ class Comment(models.Model):
     def __str__(self):
         return f'"{self.text}" - {self.author.username}'
     
-class List(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL,
-                               on_delete=models.CASCADE)
+class Category(models.Model):
     name = models.CharField(max_length=255)
     receitas = models.ManyToManyField(Post)
+    description = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.nome} by {self.autor}'
+        return f'{self.name} '
     

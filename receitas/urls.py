@@ -14,6 +14,6 @@ urlpatterns = [
     path('<int:pk>/update/', ReceitaUpdateView.as_view(), name='update'),
     path('<int:pk>/delete/', ReceitaDeleteView.as_view(), name='delete'),
     path('<int:receita_id>/obs/', ObsCreateView.as_view(), name='add_obs'),
-    path('lists/', views.ListListView.as_view(), name='lists'),
-    path('lists/create', views.ListCreateView.as_view(), name='create-list'),
+    path('lists/', views.CategoryListView.as_view(), name='categories'),
+    path('categories/<int:pk>/', views.CategoryView.as_view(), name='category'),
 ]

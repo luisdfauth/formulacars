@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from .models import Post, Comment, List
+from .models import Post, Comment, Category
 from .forms import ReceitaForm, ObsForm
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
@@ -87,13 +87,13 @@ class ObsCreateView(CreateView):
         context['receita'] = get_object_or_404(Post, pk=receita_id)
         return context
 
-class ListListView(generic.ListView):
-    model = List
+class CategoryListView(generic.ListView):
+    model = Category
     template_name = 'receitas/lists.html'
+   
 
+class CategoryView(DetailView):
+    model = Category
+    template_name = 'receitas/index.html'
+    context_object_name = 'category'
 
-class ListCreateView(generic.CreateView):
-    model = List
-    template_name = 'receitas/create_list.html'
-    fields = ['name', 'author', 'receitas']
-    success_url = reverse_lazy('receitas:lists')

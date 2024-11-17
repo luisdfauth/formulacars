@@ -12,9 +12,9 @@
     <li>Ingredientes: {{ receita.ingredientes }}</li>
     <li>Preparo: {{ receita.text }}</li>
     <li>Data de Postagem: {{ receita.date }}</li>
-    {% if receitas.list_set.all %}
-            <li>Incluso nas listas: {{ receitas.list_set.all|join:", " }} </li>
-        {% endif %}
+    {% if receita.category_set.all %}
+            <li>Incluso nas categorias: {{ receita.category_set.all|join:", " }} </li>
+    {% endif %}
     <li><a href="{% url 'receitas:update' receita.pk %}">Editar</a></li>
     <li><a href="{% url 'receitas:delete' receita.pk %}">Apagar</a></li>
     </ul>
@@ -29,9 +29,10 @@
                 <figure>
                     <blockquote>
                         "{{ comment.text }}"
-                    </blockquote>
+                    
                     <figcaption>—{{ comment.author }}</figcaption>
-                    <figcaption>{{ comment.date }}</figcaption>
+                    <figcaption>{{ comment.date }}</figcaption></br>
+                    </blockquote>
                 </figure>
             {% endfor %}
         {% else %}
