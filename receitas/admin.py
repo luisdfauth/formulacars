@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Post, Obs, List
+from .models import Post, Comment, List
 
 admin.site.register(Post)
-admin.site.register(Obs)
+admin.site.register(Comment)
 admin.site.register(List)

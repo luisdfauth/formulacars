@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from .models import Post, Obs, List
+from .models import Post, Comment, List
 from .forms import ReceitaForm, ObsForm
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
@@ -62,7 +62,7 @@ class ReceitaDeleteView(DeleteView):
 
 
 class ObsCreateView(CreateView):
-    model = Obs
+    model = Comment
     form_class = ObsForm
     template_name = 'receitas/obs.html'
 

@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Post, Obs
+from .models import Post, Comment
 
 
 class ReceitaForm(ModelForm):
@@ -22,7 +22,7 @@ class ReceitaForm(ModelForm):
 
 class ObsForm(ModelForm):
     class Meta:
-        model = Obs
+        model = Comment
         fields = [
             'author',
             'text',

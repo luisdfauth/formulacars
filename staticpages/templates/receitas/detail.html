@@ -24,13 +24,14 @@
         <h3>Comentários</h3>
     </header>
     <ul>
-        {% if receita.obs_set.all %}
-            {% for obs in receita.obs_set.all %}
+        {% if receita.comment_set.all %}
+            {% for comment in receita.comment_set.all %}
                 <figure>
                     <blockquote>
-                        "{{ obs.text }}"
+                        "{{ comment.text }}"
                     </blockquote>
-                    <figcaption>—{{ obs.author }}</figcaption>
+                    <figcaption>—{{ comment.author }}</figcaption>
+                    <figcaption>{{ comment.date }}</figcaption>
                 </figure>
             {% endfor %}
         {% else %}
