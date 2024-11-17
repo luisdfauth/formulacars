@@ -1,0 +1,16 @@
+{% extends 'base.html' %} 
+{% block title %}
+  {{ receita.name }} ({{receita.tempo_de_preparo }})
+{% endblock title %}
+{% block content %}
+<h2>Detalhes da receita de {{ receita.name }} </h2>
+<section class="dados-de-receita">
+  <img src="{{ receita.foto }}" alt="foto da receita de {{ receita.name}}" style="max-height: 300px;"/>
+  <ul>
+    <li>Nome: {{ receita.name }}</li>
+    <li>Tempo de Preparo: {{ receita.tempo_de_preparo }}</li>
+    <li><a href="{% url 'receitas:update' receita.id %}">Editar</a></li>
+    <li><a href="{% url 'receitas:delete' receita.id %}">Apagar</a></li>
+    </ul>
+  </section>
+{% endblock content %}

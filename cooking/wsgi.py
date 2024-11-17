@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'formulacars.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cooking.settings')
 
 application = get_wsgi_application()

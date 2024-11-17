@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+<h2>Todas as Receitas</h2>
+<section>
+  <p>
+    Na dúvida sobre o que almoçar? <a href="{% url 'receitas:search' %}">Buscar Receitas</a>
+  </p>
+  <p>
+    Contribua com suas receitas favoritas:
+    <a href="{% url 'receitas:create' %}">Adicionar Nova receita</a>
+  </p>
+</section>
+{% if receita_list %}
+<section class="lista-de-cards">
+  {% for receita in receita_list %}
+  <article class="card">
+    <a href="{% url 'receitas:detail' receita.id %}"> 
+        <img src="{{ receita.foto }}" alt="Foto da receita de {{ receita.name }}" />
+    </a>
+    <p>{{ receita.name }} ({{ receita.tempo_de_preparo }})</p>
+    </article>
+  {% endfor %}
+</section>
+{% else %}
+<p>Não foi encontrada nenhuma receita.</p>
+{% endif %} {% endblock content %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Atualizar Dados da Receita de {{ receita.name }} ({{ receita.tempo_de_preparo}})</h2>
+<form method="post" action="{% url 'receitas:update' receita.id%}">
+  {% csrf_token %}
+  <p>
+    <label for="id_name">Título:</label>
+    <input type="text" name="name" id="id_name" value="{{ receita.name }}" />
+    </p>
+  <p>
+    <label for=" id_tempo_de_preparo">Tempo de Preparo:</label>
+    <input
+      type="text"
+      name="tempo_de_preparo"
+      id="id_tempo_de_preparo"
+      value="{{ receita.tempo_de_preparo }}"
+    />
+  </p>
+  <p>
+    <label for=" id_foto">URL da imagem:</label>
+    <input
+      type="url"
+      name="foto"
+      id="id_foto"
+      value="{{movie.foto}}"
+    />
+  </p>
+  <button type="submit">Atualizar</button>
+  </form>
+{% endblock content %}
