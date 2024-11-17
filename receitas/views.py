@@ -1,83 +1,99 @@
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from .temp_data import movie_data
-from .models import Receita
-from .forms import ReceitaForm
+from .models import Post, Obs, List
+from .forms import ReceitaForm, ObsForm
 from django.shortcuts import render, get_object_or_404
+from django.views import generic
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 
-def list_receitas(request):
-    context = {"receita_list": movie_data}
-    return render(request, 'receitas/index.html', context)
+class ReceitaSearchView(ListView):
+    model = Post
+    template_name = 'receitas/search.html'
+    context_object_name = 'receita_list'
 
-def detail_receita(request, receita_id):
-    context = {'receita': movie_data[receita_id - 1]}
-    return render(request, 'receitas/detail.html', context)
-
-def search_receita(request):
-    context = {}
-    if request.GET.get('query', False):
-        search_term = request.GET['query'].lower()
-        receita_list = Receita.objects.filter(name__icontains=search_term)
-        context = {"receita_list": receita_list}
-    return render(request, 'receitas/search.html', context)
-
-def create_receita(request):
-    if request.method == 'POST':
-        form = ReceitaForm(request.POST)
-        if form.is_valid():
-            receita_name = form.cleaned_data['name']
-            receita_tempo_de_preparo = form.cleaned_data['tempo_de_preparo']
-            receita_foto = form.cleaned_data['foto']
-            receita = Receita(name=receita_name,
-                          tempo_de_preparo=receita_tempo_de_preparo,
-                          foto=receita_foto)
-            receita.save()
-            return HttpResponseRedirect(
-                reverse('receitas:detail', args=(receita.id, )))
-    else:
-        form = ReceitaForm()
-    context = {'form': form}
-    return render(request, 'receitas/create.html', context)
+    def get_queryset(self):
+        query = self.request.GET.get('query', '')
+        return Post.objects.filter(name__icontains=query) if query else Post.objects.none()
     
-def list_receitas(request):
-    receita_list = Receita.objects.all()
-    context = {'receita_list': receita_list}
-    return render(request, 'receitas/index.html', context)
+class ReceitaCreateView(CreateView):
+    model = Post
+    form_class = ReceitaForm
+    template_name = 'receitas/create.html'
 
-def detail_receita(request, receita_id):
-    receita = Receita.objects.get(pk=receita_id)
-    context = {'receita': receita}
-    return render(request, 'receitas/detail.html', context)
+    def form_valid(self, form):
+        receita = form.save()
+        return HttpResponseRedirect(reverse_lazy('receitas:detail', args=(receita.id,)))
+    
+class ReceitaListView(ListView):
+    model = Post
+    template_name = 'receitas/index.html'
+    context_object_name = 'receita_list'
 
-def detail_receita(request, receita_id):
-    receita = get_object_or_404(Receita, pk=receita_id)
-    context = {'receita': receita}
-    return render(request, 'receitas/detail.html', context)
+class ReceitaDetailView(DetailView):
+    model = Post
+    template_name = 'receitas/detail.html'
+    context_object_name = 'receita'
 
-def update_receita(request, receita_id):
-    receita = get_object_or_404(Receita, pk=receita_id)
+class ReceitaUpdateView(UpdateView):
+    model = Post
+    form_class = ReceitaForm
+    template_name = 'receitas/update.html'
 
-    if request.method == "POST":
-        receita.name = request.POST['name']
-        receita.tempo_de_preparo = request.POST['tempo_de_preparo']
-        receita.foto = request.POST['foto']
-        receita.save()
-        return HttpResponseRedirect(
-            reverse('receitas:detail', args=(receita.id, )))
-
-    context = {'receita': receita}
-    return render(request, 'receitas/update.html', context)
+    def form_valid(self, form):
+        receita = form.save()
+        return HttpResponseRedirect(reverse_lazy('receitas:detail', args=(receita.id,)))
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['receita'] = self.get_object()  
+        return context
 
 
-def delete_receita(request, receita_id):
-    receita = get_object_or_404(Receita, pk=receita_id)
+class ReceitaDeleteView(DeleteView):
+    model = Post
+    template_name = 'receitas/delete.html'
+    success_url = reverse_lazy('receitas:index')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['receita'] = self.get_object()  
+        return context
 
-    if request.method == "POST":
-        receita.delete()
-        return HttpResponseRedirect(reverse('receitas:index'))
 
-    context = {'receita': receita}
-    return render(request, 'receitas/delete.html', context)
+class ObsCreateView(CreateView):
+    model = Obs
+    form_class = ObsForm
+    template_name = 'receitas/obs.html'
+
+    def form_valid(self, form):
+        # Pega o ID da receita da URL (receita_id)
+        receita_id = self.kwargs['receita_id']
+        # Obtém o objeto Receita (Post) relacionado
+        receita = get_object_or_404(Post, pk=receita_id)
+        
+        # Associa a receita à nova observação
+        obs = form.save(commit=False)
+        obs.receita = receita
+        obs.save()
+
+        # Redireciona para a página de detalhes da receita
+        return HttpResponseRedirect(reverse_lazy('receitas:detail', kwargs={'pk': receita_id}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Passa a receita atual no contexto para o template
+        receita_id = self.kwargs['receita_id']
+        context['receita'] = get_object_or_404(Post, pk=receita_id)
+        return context
+
+class ListListView(generic.ListView):
+    model = List
+    template_name = 'receitas/lists.html'
+
+
+class ListCreateView(generic.CreateView):
+    model = List
+    template_name = 'receitas/create_list.html'
+    fields = ['name', 'author', 'receitas']
+    success_url = reverse_lazy('receitas:lists')

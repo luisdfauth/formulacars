@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>Atualizar Dados da Receita {{ receita.name }} ({{ receita.tempo_de_preparo}})</h2>
-<form method="POST" action="{% url 'receitas:update' receita.id%}">
+<form method="POST" action="{% url 'receitas:update' receita.pk%}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Atualizar</button>

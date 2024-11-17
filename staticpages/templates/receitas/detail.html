@@ -9,8 +9,34 @@
   <ul>
     <li>Nome: {{ receita.name }}</li>
     <li>Tempo de Preparo: {{ receita.tempo_de_preparo }}</li>
-    <li><a href="{% url 'receitas:update' receita.id %}">Editar</a></li>
-    <li><a href="{% url 'receitas:delete' receita.id %}">Apagar</a></li>
+    <li>Ingredientes: {{ receita.ingredientes }}</li>
+    <li>Preparo: {{ receita.text }}</li>
+    <li>Data de Postagem: {{ receita.date }}</li>
+    {% if receitas.list_set.all %}
+            <li>Incluso nas listas: {{ receitas.list_set.all|join:", " }} </li>
+        {% endif %}
+    <li><a href="{% url 'receitas:update' receita.pk %}">Editar</a></li>
+    <li><a href="{% url 'receitas:delete' receita.pk %}">Apagar</a></li>
     </ul>
   </section>
+  <section>
+    <header>
+        <h3>Comentários</h3>
+    </header>
+    <ul>
+        {% if receita.obs_set.all %}
+            {% for obs in receita.obs_set.all %}
+                <figure>
+                    <blockquote>
+                        "{{ obs.text }}"
+                    </blockquote>
+                    <figcaption>—{{ obs.author }}</figcaption>
+                </figure>
+            {% endfor %}
+        {% else %}
+            <p>Seja o primeiro a comentar!</p>
+        {% endif %}
+    </ul>
+    <a href="{% url 'receitas:add_obs' receita.pk %}"><button>Poste seu comentário</button></a>
+</section>
 {% endblock content %}
