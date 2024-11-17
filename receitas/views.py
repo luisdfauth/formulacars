@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from .temp_data import movie_data
 from .models import Receita
+from .forms import ReceitaForm
 from django.shortcuts import render, get_object_or_404
 
 
@@ -25,17 +26,21 @@ def search_receita(request):
 
 def create_receita(request):
     if request.method == 'POST':
-        receita_name = request.POST['name']
-        receita_tempo_de_preparo = request.POST['tempo_de_preparo']
-        receita_foto = request.POST['foto']
-        receita = Receita(name=receita_name,
-                      release_year=receita_tempo_de_preparo,
-                      poster_url=receita_foto)
-        receita.save()
-        return HttpResponseRedirect(
-            reverse('receitas:detail', args=(receita.id, )))
+        form = ReceitaForm(request.POST)
+        if form.is_valid():
+            receita_name = form.cleaned_data['name']
+            receita_tempo_de_preparo = form.cleaned_data['tempo_de_preparo']
+            receita_foto = form.cleaned_data['foto']
+            receita = Receita(name=receita_name,
+                          tempo_de_preparo=receita_tempo_de_preparo,
+                          foto=receita_foto)
+            receita.save()
+            return HttpResponseRedirect(
+                reverse('receitas:detail', args=(receita.id, )))
     else:
-        return render(request, 'receitas/create.html', {})
+        form = ReceitaForm()
+    context = {'form': form}
+    return render(request, 'receitas/create.html', context)
     
 def list_receitas(request):
     receita_list = Receita.objects.all()
